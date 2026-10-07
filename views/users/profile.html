@@ -1,0 +1,45 @@
+<h3>My Profile</h3>
+<hr>
+<div class="row">
+ 
+<div class="col-lg-6">
+    <h6>
+    <i class="bi bi-person-fill-add">&nbsp;&nbsp;Update profile</i>
+    </h6>
+  <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="name" placeholder="">
+        <label for="name">Username</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="email" placeholder="">
+        <label for="email">E-mail address</label>
+    </div>
+ 
+    <button type="button" class="btn btn-primary mb-3">
+        <i class="bi bi-arrow-repeat" onclick="updateProfile()">&nbsp;&nbsp;Update profile</i>
+    </button>
+</div>
+ 
+<div class="col-lg-6">
+    <h6>
+    <i class="bi bi-key-fill">&nbsp;&nbsp;Update Password</i>
+</h6>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="oldpass" placeholder="">
+        <label for="password">Old Password</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="newpass" placeholder="">
+        <label for="password">New Password</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="confirm" placeholder="">
+        <label for="confirm">Confirm new Password</label>
+    </div>
+ 
+    <button type="button" class="btn btn-primary">
+        <i class="bi bi-person-fill-add" onclick="updatePasswd()">&nbsp;&nbsp;Update password</i>
+    </button>
+ 
+</div>
+</div>
