@@ -33,9 +33,9 @@ async function getWeather(){
     }
     else{
         const datas = await response.json();
-        drawWeatherTable(datas)
-        initWeatherChart(datas)
-        initWeatherCalendar(datas)
+        drawWeatherTable(datas.results)
+        initWeatherChart(datas.results)
+        initWeatherCalendar(datas.results)
     }
 }
 

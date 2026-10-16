@@ -1,136 +1,10 @@
-<h3>Manage Weather Forecasts</h3>
+<h3>Weather Forecast</h3>
 <hr>
-<div class="accordion mb-3" id="accordionExample">
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-        Manage Weather
-      </button>
-    </h2>
-    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-      <div class="accordion-body">
-
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-floating mb-3">
-              <input type="date" class="form-control" id="date" placeholder="">
-              <label for="date">Date</label>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="location" placeholder="">
-              <label for="location">Location</label>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-floating mb-3">
-              <select class="form-select" id="weathertype">
-                <option value="" selected>Choose...</option>
-                <option value="sunny">Sunny</option>
-                <option value="cloudy">Cloudy</option>
-                <option value="rainy">Rainy</option>
-                <option value="stormy">Stormy</option>
-                <option value="snowy">Snowy</option>
-                <option value="foggy">Foggy</option>
-                <option value="windy">Windy</option>
-              </select>
-              <label for="weathertype">Weather type</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" class="form-control" id="tempmin" placeholder="">
-              <label for="tempmin">Min temp (°C)</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" class="form-control" id="tempmax" placeholder="">
-              <label for="tempmax">Max temp (°C)</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" min="0" class="form-control" id="precipitation" placeholder="">
-              <label for="precipitation">Precipitation (mm)</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <input type="number" min="0" max="100" class="form-control" id="precipitationprobability" placeholder="">
-              <label for="precipitationprobability">Precip. probability (%)</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" min="0" class="form-control" id="windspeed" placeholder="">
-              <label for="windspeed">Wind speed (km/h)</label>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-floating mb-3">
-              <select class="form-select" id="winddirection">
-                <option value="" selected>Choose...</option>
-                <option value="N">N</option>
-                <option value="NE">NE</option>
-                <option value="E">E</option>
-                <option value="SE">SE</option>
-                <option value="S">S</option>
-                <option value="SW">SW</option>
-                <option value="W">W</option>
-                <option value="NW">NW</option>
-              </select>
-              <label for="winddirection">Wind direction</label>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="form-floating mb-3">
-              <input type="number" min="0" max="100" class="form-control" id="humidity" placeholder="">
-              <label for="humidity">Humidity (%)</label>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" class="form-control" id="pressure" placeholder="">
-              <label for="pressure">Pressure (hPa)</label>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="form-floating mb-3">
-              <input type="number" step="0.1" min="0" class="form-control" id="uvindex" placeholder="">
-              <label for="uvindex">UV index</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <button type="button" class="btn btn-primary mb-3 col-12 col-md-2 ms-auto" onclick="createWeather()">
-            <i class="bi bi-plus-lg">&nbsp;&nbsp;Add</i>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</div>
-
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button"
-    role="tab" aria-controls="table-tab-pane" aria-selected="true">Table view</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-tab-pane" type="button"
-    role="tab" aria-controls="calendar-tab-pane" aria-selected="false">Calendar view</button>
+    role="tab" aria-controls="table-tab-pane" aria-selected="true">Details</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="chart-tab" data-bs-toggle="tab" data-bs-target="#chart-tab-pane" type="button"
@@ -156,7 +30,6 @@
             <th scope="col" class="text-end">Humidity</th>
             <th scope="col" class="text-end">Pressure</th>
             <th scope="col" class="text-end">UV</th>
-            <th scope="col" class="text-end">Operations</th>
           </tr>
         </thead>
         <tbody id="tbody">
@@ -164,12 +37,6 @@
         </tbody>
       </table>
     </div>
-  </div>
-
-  <div class="tab-pane fade" id="calendar-tab-pane" role="tabpanel"
-    aria-labelledby="calendar-tab" tabindex="0">
-    <h3>Weather calendar</h3>
-    <div id="calendar"></div>
   </div>
 
   <div class="tab-pane fade" id="chart-tab-pane" role="tabpanel"

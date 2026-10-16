@@ -6,7 +6,7 @@ async function registerUser(){
     const passwd = document.querySelector('#passwd')
     const confirm = document.querySelector('#confirm')
 
-    let usser= {
+    let user= {
         name: name.value,
         email: email.value,
         passwd: passwd.value,
@@ -17,9 +17,11 @@ async function registerUser(){
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'},
-        body: JSON.stringify(usser)
+        body: JSON.stringify(user)
     })
         
+    let res = await response.json()
+
     if (response.status!=200){
         showMessage('danger','ERROR',res.error)
     }
@@ -39,7 +41,7 @@ async function loginUser(){
         passwd
     }
         //todo
-    const response =  await fetch('http://localhost:3000/',{
+    const response =  await fetch('http://localhost:3000/login',{
        method : 'POST',
         headers : {"Content-Type": "Application/json"},
         body : JSON.stringify(user)
@@ -52,7 +54,7 @@ async function loginUser(){
     }
     else{
         showMessage('success','ok',res.message)
-        storeUser(res.loggedUser)
+        storeUser(res.user)
         loginCheck()
     }
 }
@@ -60,6 +62,7 @@ async function loginUser(){
 function logout(){
     clearUser()
     loginCheck()
+    navigate('users/home')
 }
 
 function storeUser(user){
@@ -79,16 +82,15 @@ function loginCheck(){
     if (user = loadUser()){
         if(user.role == 'admin'){
             setMenuItems('admin')
-            navigate('admin/dashboard')
+            navigate('admin/add_weather')
         }
         else{
             setMenuItems('user')
-            navigate('users/steps')
+            navigate('users/weather')
         }
     }
     else{
         setMenuItems('')
-        navigate('users/login')
     }
 }
 
@@ -132,8 +134,7 @@ async function updateProfile(){
         luid: loggeduser.ID
     }
 
-                                                                //todo
-    const response =  await fetch(`http://localhost:3000/${loggeduser.ID}`,{
+    const response =  await fetch(`http://localhost:3000/profile/${loggeduser.ID}`,{
         method : 'PATCH',
         headers : {"Content-Type": "Application/json"},
         body : JSON.stringify(data)
@@ -163,15 +164,15 @@ async function updatePasswd(){
     let confirm = document.querySelector('#confirm')
 
     let data={
-        oldpass: oldpass.value,
-        newpass: newpass.value,
+        oldPasswd: oldpass.value,
+        newPasswd: newpass.value,
         confirm: confirm.value
     }
 
     let uid = loadUser() ? loadUser().ID : 0;
 
-    const response =  await fetch(`http://localhost:3000/users/${uid}/passmod`,{
-        method : 'POST',
+    const response =  await fetch(`http://localhost:3000/passmod/${uid}`,{
+        method : 'PATCH',
         headers : {"Content-Type": "Application/json"},
         body : JSON.stringify(data)
     })

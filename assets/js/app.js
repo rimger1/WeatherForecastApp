@@ -8,9 +8,9 @@ let theme = 'ligth';
 async function navigate(page) {
     contentBox.innerHTML = await (await fetch(`views/${page}.html`)).text();
 
-/*     switch (page){
-        case 'admin/users':{
-            getAllUsers()
+    switch (page){
+        case 'users/weather':{
+            getWeather()
             break;
         }
         case 'users/profile':{
@@ -21,12 +21,7 @@ async function navigate(page) {
             getStatistics()
             break;
         }
-        case 'users/steps' : {
-            getUserSteps()
-            break;
-        }
     }
- */
 };
 
 lightmodeBtn.addEventListener('click',()=>{
@@ -64,4 +59,4 @@ function loadTheme(){
 
 navigate('users/home');
 loadTheme();
-//loginCheck();
+loginCheck();
