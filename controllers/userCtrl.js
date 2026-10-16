@@ -13,10 +13,187 @@ async function registerUser(){
         confirm: confirm.value
     }
 
-    const response = await fetch('http://localhost:3000/users/register',{
+    const response = await fetch('http://localhost:3000/register',{
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'},
         body: JSON.stringify(usser)
     })
+        
+    if (response.status!=200){
+        showMessage('danger','ERROR',res.error)
+    }
+    else{
+        showMessage('success','ok',res.message)
+        naviagte('users/login')
+    }
+}
+
+
+async function loginUser(){
+    let email= document.querySelector('#email').value;
+    let passwd= document.querySelector('#passwd').value;
+
+    let user = {
+        email,
+        passwd
+    }
+        //todo
+    const response =  await fetch('http://localhost:3000/',{
+       method : 'POST',
+        headers : {"Content-Type": "Application/json"},
+        body : JSON.stringify(user)
+    })
+
+    let res = await response.json();
+
+    if (response.status!=200){
+        showMessage('danger','ERROR',res.error)
+    }
+    else{
+        showMessage('success','ok',res.message)
+        storeUser(res.loggedUser)
+        loginCheck()
+    }
+}
+
+function logout(){
+    clearUser()
+    loginCheck()
+}
+
+function storeUser(user){
+    sessionStorage.setItem('WFUser', JSON.stringify(user))
+}
+
+function loadUser(){
+    let user = JSON.parse(sessionStorage.getItem('WFUser'))
+    return user;
+}
+
+function clearUser(){
+    sessionStorage.removeItem('WFUser')
+}
+
+function loginCheck(){
+    if (user = loadUser()){
+        if(user.role == 'admin'){
+            setMenuItems('admin')
+            navigate('admin/dashboard')
+        }
+        else{
+            setMenuItems('user')
+            navigate('users/steps')
+        }
+    }
+    else{
+        setMenuItems('')
+        navigate('users/login')
+    }
+}
+
+function setMenuItems(params){
+    let guestMenu = document.querySelector('#guestmenu')
+    let adminMenu = document.querySelector('#adminmenu')
+    let userMenu = document.querySelector('#usermenu')
+
+
+    switch(params){
+        case 'admin': {
+            guestMenu.classList.add('hide')
+            userMenu.classList.add('hide')
+            adminMenu.classList.remove('hide')
+            break;
+        }
+        case 'user': {
+            guestMenu.classList.add('hide')
+            adminMenu.classList.add('hide')
+            userMenu.classList.remove('hide')
+            break;
+        }
+        default : {
+            adminMenu.classList.add('hide')
+            userMenu.classList.add('hide')
+            guestMenu.classList.remove('hide')
+            break;
+        }
+    }
+}
+
+async function updateProfile(){
+    let name = document.querySelector('#name')
+    let email = document.querySelector('#email')
+
+    let loggeduser = loadUser()
+
+    let data={
+        username: name.value,
+        email: email.value,
+        luid: loggeduser.ID
+    }
+
+                                                                //todo
+    const response =  await fetch(`http://localhost:3000/${loggeduser.ID}`,{
+        method : 'PATCH',
+        headers : {"Content-Type": "Application/json"},
+        body : JSON.stringify(data)
+    })
+    
+    let res = await response.json();
+    
+    console.log(response.status)
+    if (response.status!=200){
+        showMessage('danger','ERROR',res.error)
+    }
+    else{
+        showMessage('success','ok',res.message)
+        let user ={
+            ID: loggeduser.ID,
+            name: name.value,
+            email: email.value,
+            role: loggeduser.role
+        }
+        storeUser(user)
+    }
+}
+
+async function updatePasswd(){
+    let oldpass = document.querySelector('#oldpass')
+    let newpass = document.querySelector('#newpass')
+    let confirm = document.querySelector('#confirm')
+
+    let data={
+        oldpass: oldpass.value,
+        newpass: newpass.value,
+        confirm: confirm.value
+    }
+
+    let uid = loadUser() ? loadUser().ID : 0;
+
+    const response =  await fetch(`http://localhost:3000/users/${uid}/passmod`,{
+        method : 'POST',
+        headers : {"Content-Type": "Application/json"},
+        body : JSON.stringify(data)
+    })
+    
+    let res = await response.json();
+    
+    console.log(response.status)
+    if (response.status!=200){
+        showMessage('danger','ERROR',res.error)
+    }
+    else{
+        showMessage('success','ok',res.message)
+        oldpass.value=''
+        newpass.value=''
+        confirm.value=''
+    }
+}
+
+function getUserData(){
+    let user = loadUser()
+
+    document.querySelector('#name').value = user.name
+    document.querySelector('#email').value = user.email
+
 }

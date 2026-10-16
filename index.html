@@ -29,22 +29,26 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
 
-                    <ul class="navbar-nav" id="basemenu">
+                    <ul class="navbar-nav" id="guestmenu">
+                        <!-- guest -->
                         <li class="nav-item">
                         <a class="nav-link" href="#" onclick="navigate('users/home')">Home</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigate('users/login')">Login</a>
+                        <a class="nav-link" href="#" onclick="navigate('guest/login')">Login</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" href='#' onclick="navigate('users/register')">Registration</a>
+                        <a class="nav-link" href='#' onclick="navigate('guest/register')">Registration</a>
                         </li>
                     </ul> 
 
                     <ul class="navbar-nav" id="usermenu">
                         <!-- user -->
                         <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigate('users/steps')">My steps</a>
+                        <a class="nav-link" href="#" onclick="navigate('users/home')">Home</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="navigate('users/weather')">Weather</a>
                         </li>
                         <li class="nav-item">
                         <a class="nav-link" href="#"  onclick="navigate('users/profile')">My profile</a>
@@ -61,11 +65,11 @@
                         <li class="nav-item">
                         <a class="nav-link" href="#" onclick="navigate('admin/users')">Manage Users</a>
                         </li>
-
-                        <!-- logout -->
                         <li class="nav-item">
                         <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                        </li>
                     </ul>
+
                 </div>
             </div>
         </nav>
