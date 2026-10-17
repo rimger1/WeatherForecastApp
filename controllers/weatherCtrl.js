@@ -1,6 +1,11 @@
 let weatherChart = null
 let weatherCalendar = null
 
+let loggeduser = loadUser()
+
+let editingID = null      // ID of the row being edited (null = adding new)
+let weatherData = []      // the last loaded rows, used by editWeather()
+
 const weatherIcons = {
     sunny:  'bi-sun',
     clear:  'bi-sun',
@@ -33,14 +38,107 @@ async function getWeather(){
     }
     else{
         const datas = await response.json();
+        weatherData = datas.results
         drawWeatherTable(datas.results)
         initWeatherChart(datas.results)
-        initWeatherCalendar(datas.results)
     }
 }
 
+async function getWeatherGuest(){
+
+    const response = await fetch(`http://localhost:3000/guest/weather`, {
+        method:"GET",
+        headers:{"Content-Type":"application/json"},
+    });
+
+    if(response.status !=200){
+        const res = await response.json();
+        showMessage('danger','error',res.error)
+    }
+    else{
+        const datas = await response.json();
+        drawWeatherTableGuest(datas.results)
+    }
+}
 
 function drawWeatherTable(results){
+    let tbody = document.querySelector('#tbody')
+    tbody.innerHTML=""
+
+    let sumMin = 0
+    let sumMax = 0
+
+    const isAdmin = loggeduser?.role === 'admin'
+
+    // copy, so the original array isn't mutated
+    let rows = [...results].reverse()
+
+    if(isAdmin){
+        rows.forEach(w=>{
+            sumMin += Number(w.temp_min)
+            sumMax += Number(w.temp_max)
+
+            tbody.innerHTML+=`
+                <tr>
+                    <th scope="row">${w.ID}</th>
+                    <td>${moment(w.date).format('YYYY-MM-DD')}&nbsp;&nbsp;<i class="bi bi-calendar-week"></i></td>
+                    <td>${w.location}</td>
+                    <td><i class="bi ${getWeatherIcon(w.weather_type)}"></i>&nbsp;${w.weather_type}</td>
+                    <td class="text-end">${w.temp_min} °C</td>
+                    <td class="text-end">${w.temp_max} °C</td>
+                    <td class="text-end">${w.precipitation} mm</td>
+                    <td class="text-end">${w.precipitation_probability} %</td>
+                    <td class="text-end">${w.wind_speed} km/h ${w.wind_direction ?? ''}</td>
+                    <td class="text-end">${w.humidity} %</td>
+                    <td class="text-end">${w.pressure} hPa</td>
+                    <td class="text-end">${w.uv_index}</td>
+                    <td class="text-end text-nowrap">
+                        <button class="btn btn-sm btn-warning" onclick="editWeather(${w.ID})"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteWeather(${w.ID})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                `
+        })
+    }
+    else{
+        rows.forEach(w=>{
+            sumMin += Number(w.temp_min)
+            sumMax += Number(w.temp_max)
+
+            tbody.innerHTML+=`
+                <tr>
+                    <th scope="row">${w.ID}</th>
+                    <td>${moment(w.date).format('YYYY-MM-DD')}&nbsp;&nbsp;<i class="bi bi-calendar-week"></i></td>
+                    <td>${w.location}</td>
+                    <td><i class="bi ${getWeatherIcon(w.weather_type)}"></i>&nbsp;${w.weather_type}</td>
+                    <td class="text-end">${w.temp_min} °C</td>
+                    <td class="text-end">${w.temp_max} °C</td>
+                    <td class="text-end">${w.precipitation} mm</td>
+                    <td class="text-end">${w.precipitation_probability} %</td>
+                    <td class="text-end">${w.wind_speed} km/h ${w.wind_direction ?? ''}</td>
+                    <td class="text-end">${w.humidity} %</td>
+                    <td class="text-end">${w.pressure} hPa</td>
+                    <td class="text-end">${w.uv_index}</td>
+                </tr>
+                `
+        })
+    }
+
+    // averages in the footer
+    // columns after "Max": admin has 7 (with Operations), user has 6
+    let count = rows.length || 1
+    tbody.innerHTML+=`
+    <tr class="t foot">
+        <td><br></td>
+        <td colspan="3"><strong>Average:</strong></td>
+        <td class="text-end"><strong>${(sumMin / count).toFixed(1)} °C</strong></td>
+        <td class="text-end"><strong>${(sumMax / count).toFixed(1)} °C</strong></td>
+        <td colspan="${isAdmin ? 7 : 6}"><br></td>
+    </tr>`
+}
+
+
+function drawWeatherTableGuest(results){
     let tbody = document.querySelector('#tbody')
     tbody.innerHTML=""
 
@@ -56,31 +154,21 @@ function drawWeatherTable(results){
 
         tbody.innerHTML+=`
             <tr>
-                <th scope="row">${w.ID}</th>
                 <td>${moment(w.date).format('YYYY-MM-DD')}&nbsp;&nbsp;<i class="bi bi-calendar-week"></i></td>
                 <td>${w.location}</td>
                 <td><i class="bi ${getWeatherIcon(w.weather_type)}"></i>&nbsp;${w.weather_type}</td>
                 <td class="text-end">${w.temp_min} °C</td>
                 <td class="text-end">${w.temp_max} °C</td>
-                <td class="text-end">${w.precipitation} mm</td>
-                <td class="text-end">${w.precipitation_probability} %</td>
-                <td class="text-end">${w.wind_speed} km/h ${w.wind_direction ?? ''}</td>
-                <td class="text-end">${w.humidity} %</td>
-                <td class="text-end">${w.pressure} hPa</td>
-                <td class="text-end">${w.uv_index}</td>
             </tr>
             `
     })
 
-    // averages in the footer
     let count = rows.length || 1
     tbody.innerHTML+=`
     <tr class="t foot">
-        <td><br></td>
         <td colspan="3"><strong>Average:</strong></td>
         <td class="text-end"><strong>${(sumMin / count).toFixed(1)} °C</strong></td>
         <td class="text-end"><strong>${(sumMax / count).toFixed(1)} °C</strong></td>
-        <td colspan="8"><br></td>
     </tr>`
 }
 
@@ -105,61 +193,104 @@ async function deleteWeather(weatherID){
     }
 }
 
-async function createWeather() {
-    let date = document.querySelector('#date')
-    let location = document.querySelector('#location')
-    let temp_min = document.querySelector('#tempmin')
-    let temp_max = document.querySelector('#tempmax')
-    let weather_type = document.querySelector('#weathertype')
-    let precipitation = document.querySelector('#precipitation')
-    let precipitation_probability = document.querySelector('#precipitationprobability')
-    let wind_speed = document.querySelector('#windspeed')
-    let wind_direction = document.querySelector('#winddirection')
-    let humidity = document.querySelector('#humidity')
-    let pressure = document.querySelector('#pressure')
-    let uv_index = document.querySelector('#uvindex')
+// fills the form with the selected row
+function editWeather(weatherID){
+    const w = weatherData.find(x => x.ID == weatherID)
+    if(!w) return
 
+    editingID = weatherID
+
+    document.querySelector('#date').value = moment(w.date).format('YYYY-MM-DD')
+    document.querySelector('#location').value = w.location
+    document.querySelector('#tempmin').value = w.temp_min
+    document.querySelector('#tempmax').value = w.temp_max
+    document.querySelector('#weathertype').value = w.weather_type
+    document.querySelector('#precipitation').value = w.precipitation
+    document.querySelector('#precipitationprobability').value = w.precipitation_probability
+    document.querySelector('#windspeed').value = w.wind_speed
+    document.querySelector('#winddirection').value = w.wind_direction
+    document.querySelector('#humidity').value = w.humidity
+    document.querySelector('#pressure').value = w.pressure
+    document.querySelector('#uvindex').value = w.uv_index
+
+    document.querySelector('#saveBtn').innerHTML = '<i class="bi bi-check-lg">&nbsp;&nbsp;Save</i>'
+    document.querySelector('#cancelBtn').classList.remove('d-none')
+
+    // open the form and scroll to it
+    const collapse = document.querySelector('#collapseOne')
+    if(!collapse.classList.contains('show')){
+        new bootstrap.Collapse(collapse, { toggle: true })
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function cancelEdit(){
+    editingID = null
+    resetWeatherForm()
+}
+
+function resetWeatherForm(){
+    document.querySelector('#date').value = null
+    document.querySelector('#location').value = ''
+    document.querySelector('#tempmin').value = 0
+    document.querySelector('#tempmax').value = 0
+    document.querySelector('#weathertype').value = ''
+    document.querySelector('#precipitation').value = 0
+    document.querySelector('#precipitationprobability').value = 0
+    document.querySelector('#windspeed').value = 0
+    document.querySelector('#winddirection').value = ''
+    document.querySelector('#humidity').value = 0
+    document.querySelector('#pressure').value = 0
+    document.querySelector('#uvindex').value = 0
+
+    document.querySelector('#saveBtn').innerHTML = '<i class="bi bi-plus-lg">&nbsp;&nbsp;Add</i>'
+    document.querySelector('#cancelBtn').classList.add('d-none')
+}
+
+// replaces createWeather(): adds a new row, or updates the edited one
+async function saveWeather() {
     let luid = loadUser() ? loadUser().ID : 0;
     let data = {
         luid,
-        date: date.value,
-        location: location.value,
-        temp_min: temp_min.value,
-        temp_max: temp_max.value,
-        weather_type: weather_type.value,
-        precipitation: precipitation.value,
-        precipitation_probability: precipitation_probability.value,
-        wind_speed: wind_speed.value,
-        wind_direction: wind_direction.value,
-        humidity: humidity.value,
-        pressure: pressure.value,
-        uv_index: uv_index.value
+        date: document.querySelector('#date').value,
+        location: document.querySelector('#location').value,
+        temp_min: document.querySelector('#tempmin').value,
+        temp_max: document.querySelector('#tempmax').value,
+        weather_type: document.querySelector('#weathertype').value,
+        precipitation: document.querySelector('#precipitation').value,
+        precipitation_probability: document.querySelector('#precipitationprobability').value,
+        wind_speed: document.querySelector('#windspeed').value,
+        wind_direction: document.querySelector('#winddirection').value,
+        humidity: document.querySelector('#humidity').value,
+        pressure: document.querySelector('#pressure').value,
+        uv_index: document.querySelector('#uvindex').value
     }
 
-    const response = await fetch(`http://localhost:3000/weather`, {
-        method:"POST",
+    const isEdit = editingID !== null
+    const url = isEdit
+        ? `http://localhost:3000/weather/${editingID}`
+        : `http://localhost:3000/weather`
+
+    const response = await fetch(url, {
+        method: isEdit ? "PATCH" : "POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify(data)
     });
 
-    if(response.status !=200){
+    // your POST route answers 201, the PUT route answers 200
+    const expectedStatus = isEdit ? 200 : 201
+
+    if(response.status != expectedStatus){
         const res = await response.json();
         showMessage('danger','error',res.error)
     }
     else{
+        if(isEdit){
+            showMessage('success','ok','Forecast updated')
+        }
+        editingID = null
+        resetWeatherForm()
         getWeather()
-        date.value=null
-        location.value=''
-        temp_min.value=0
-        temp_max.value=0
-        weather_type.value=''
-        precipitation.value=0
-        precipitation_probability.value=0
-        wind_speed.value=0
-        wind_direction.value=''
-        humidity.value=0
-        pressure.value=1013
-        uv_index.value=0
     }
 }
 
@@ -231,41 +362,4 @@ function initWeatherChart(results){
             }
         }
     });
-}
-
-function initWeatherCalendar(results){
-    var calendarEl = document.getElementById('calendar');
-    colorScheme = localStorage.getItem('StepcounterTheme') || 'light'
-
-    let myEvents = results.map((w)=>{
-        return {
-            title: `${w.weather_type} ${w.temp_min}° / ${w.temp_max}° (${w.location})`,
-            start: w.date
-        }
-    })
-
-    // avoid stacking calendars on re-render
-    if(weatherCalendar){
-        weatherCalendar.destroy()
-    }
-
-    weatherCalendar = new FullCalendar.Calendar(calendarEl, {
-      colorScheme: colorScheme,
-      initialDate: new Date(),
-      initialView: 'dayGridMonth',
-      nowIndicator: true,
-      headerToolbar: {
-        left: 'prevYear,prev,next,nextYear today',
-        center: 'title',
-        right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-      },
-      navLinks: true,
-      editable: false,
-      selectable: false,
-      selectMirror: true,
-      dayMaxEvents: true,
-      events: myEvents
-    });
-
-    weatherCalendar.render();
 }

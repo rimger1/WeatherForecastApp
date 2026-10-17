@@ -35,6 +35,9 @@
                         <a class="nav-link" href="#" onclick="navigate('users/home')">Home</a>
                         </li>
                         <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="navigate('guest/weather_guest')">Weather</a>
+                        </li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#" onclick="navigate('guest/login')">Login</a>
                         </li>
                         <li class="nav-item">
@@ -60,7 +63,7 @@
                     <ul class="navbar-nav" id="adminmenu">
                         <!-- admin -->
                         <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigate('admin/dashboard')">Dashboard</a>
+                        <a class="nav-link" href="#" onclick="navigate('admin/add_weather')">Add Weather</a>
                         </li>
                         <li class="nav-item">
                         <a class="nav-link" href="#" onclick="navigate('admin/users')">Manage Users</a>
@@ -88,9 +91,9 @@
 
     <!-- Controllers -->
     <script src="controllers/mesageCtrl.js"></script>
-    <script src="controllers/weatherCtrl.js"></script>
     <script src="controllers/userCtrl.js"></script>
     <script src="controllers/adminCtrl.js"></script>
+    <script src="controllers/weatherCtrl.js"></script>
 
     <!-- JS assets -->
     <script src="assets/js/bootstrap.min.js"></script>

@@ -17,8 +17,12 @@ async function navigate(page) {
             getUserData()
             break;
         }
-        case 'admin/dashboard': {
-            getStatistics()
+        case 'admin/add_weather': {
+            getWeather()
+            break;
+        }
+        case 'guest/weather_guest': {
+            getWeatherGuest()
             break;
         }
     }

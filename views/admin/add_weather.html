@@ -111,7 +111,10 @@
         </div>
 
         <div class="row">
-          <button type="button" class="btn btn-primary mb-3 col-12 col-md-2 ms-auto" onclick="createWeather()">
+          <button type="button" id="cancelBtn" class="btn btn-secondary mb-3 col-12 col-md-2 ms-auto d-none" onclick="cancelEdit()">
+            <i class="bi bi-x-lg">&nbsp;&nbsp;Cancel</i>
+          </button>
+          <button type="button" id="saveBtn" class="btn btn-primary mb-3 col-12 col-md-2 ms-md-2" onclick="saveWeather()">
             <i class="bi bi-plus-lg">&nbsp;&nbsp;Add</i>
           </button>
         </div>
@@ -127,10 +130,6 @@
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table-tab-pane" type="button"
     role="tab" aria-controls="table-tab-pane" aria-selected="true">Table view</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-tab-pane" type="button"
-    role="tab" aria-controls="calendar-tab-pane" aria-selected="false">Calendar view</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="chart-tab" data-bs-toggle="tab" data-bs-target="#chart-tab-pane" type="button"
