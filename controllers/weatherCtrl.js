@@ -68,11 +68,6 @@ function drawWeatherTable(results){
                 <td class="text-end">${w.humidity} %</td>
                 <td class="text-end">${w.pressure} hPa</td>
                 <td class="text-end">${w.uv_index}</td>
-                <td class="text-end">
-                    <button type="button" class="btn btn-danger" onclick="deleteWeather(${w.ID})">
-                        <i class="bi bi-trash3">&nbsp;&nbsp;Delete</i>
-                    </button>
-                </td>
             </tr>
             `
     })
