@@ -21,6 +21,10 @@ async function navigate(page) {
             getWeather()
             break;
         }
+        case 'admin/users': {
+            getAllUsers()
+            break;
+        }
         case 'guest/weather_guest': {
             getWeatherGuest()
             break;
